@@ -7,7 +7,7 @@ async function api(path, opts) {
   });
   if (res.status === 401) { window.location.href = '/login.html'; throw new Error('Not authenticated'); }
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+  if (!res.ok) throw new Error(data.detail ? `${data.error} (${data.detail})` : (data.error || `Request failed (${res.status})`));
   return data;
 }
 
@@ -15,7 +15,7 @@ async function apiUpload(path, formData) {
   const res = await fetch(path, { method: 'POST', body: formData });
   if (res.status === 401) { window.location.href = '/login.html'; throw new Error('Not authenticated'); }
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+  if (!res.ok) throw new Error(data.detail ? `${data.error} (${data.detail})` : (data.error || `Request failed (${res.status})`));
   return data;
 }
 
