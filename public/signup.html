@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign up — Outreach</title>
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-box">
+    <h1>Outreach<span style="color:var(--signal)">.</span></h1>
+    <p class="sub">Create your account.</p>
+    <div id="error" class="error-banner" style="display:none;"></div>
+    <form id="signupForm">
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" required autofocus />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" required minlength="8" />
+        <div class="helptext">At least 8 characters.</div>
+      </div>
+      <button type="submit" class="primary">Create account</button>
+    </form>
+    <div class="auth-switch">Already have an account? <a href="/login.html">Log in</a></div>
+  </div>
+</div>
+<script>
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const errorEl = document.getElementById('error');
+  errorEl.style.display = 'none';
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  try {
+    const res = await fetch('/api/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Signup failed.');
+    window.location.href = '/';
+  } catch (err) {
+    errorEl.textContent = err.message;
+    errorEl.style.display = 'block';
+  }
+});
+</script>
+</body>
+</html>
