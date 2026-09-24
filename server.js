@@ -555,7 +555,16 @@ app.get("/", (req, res) => {
 app.use((err, req, res, next) => {
   console.error(`Unhandled error on ${req.method} ${req.path}:`, err);
   if (res.headersSent) return next(err);
-  res.status(500).json({ error: "Something went wrong on our end. Please try again." });
+  // TEMPORARY DEBUG MODE: exposes the real error message (not the full stack) in the
+  // API response so it's visible in the browser Network tab / console without needing
+  // server log access. Remove the `detail` field once the underlying bug is found —
+  // don't ship this to real users long-term, it can leak internal details (e.g. raw
+  // DB error text) to anyone hitting a broken endpoint.
+  res.status(500).json({
+    error: "Something went wrong on our end. Please try again.",
+    detail: err && err.message,
+    code: err && err.code
+  });
 });
 
 // Last-resort safety net: if something still slips past the above (e.g. a rejection in
